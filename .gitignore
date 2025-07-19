@@ -1,0 +1,32 @@
+# Binaries and build artifacts
+/bin/
+/dist/
+/*.exe
+/*.dll
+/*.so
+/*.dylib
+/*.test
+
+# Output logs
+*.log
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Dependency cache
+vendor/
+
+# Configs and secrets
+config/config.toml
+.env
+
+# Go module cache (optional if you want to keep things tidy)
+go.sum
