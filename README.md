@@ -80,7 +80,7 @@ go run cmd/worker/main.go
 │   └── utils/          # Helpers
 ├── README.md
 └── go.mod
-```
+```text
 
 
 ---
