@@ -1,0 +1,6 @@
+expected_token = "supersecrettokengo123"
+
+[zoho]
+client_id = "1000.JZ10KQZK3BE18W80TJ5JYJKL1RH6OE"
+client_secret = "8f6e3c4e438cf7b1666be3ab3ed60faee4b77f3c84"
+refresh_token = "1000.20cb118d5491933a35add68aa861e7cc.ac094b63f45b4cfd8e93b4872ae58bca"
