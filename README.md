@@ -109,13 +109,18 @@ Please open an issue or create a PR with clear documentation and use case. The p
 
 ---
 
-## 📈 Suggested KPIs
+## 📊 Observability & Success Metrics
 
-- 🧮 **Error rate**: < 1% on CRM record creation  
-- ⏱ **Average queue delay**: < 2 minutes per submission  
-- 🎯 **Match/link accuracy**: > 98% between submission and CRM contact  
+A production-ready deployment should include:
 
-Log events, retry metrics, and Temporal UI dashboards are recommended for real-time observability.
+- 🔁 Retry and error handling with visibility via Temporal’s built-in UI
+- 📜 Structured logs for webhook receipt, token exchange, and CRM API calls
+- 📈 Optional metrics integration with tools like Prometheus + Grafana or DataDog for:
+  - Workflow execution success/failure rates
+  - CRM API latency and errors
+  - Duplicate or missing field detection
+- ✅ Alerting thresholds configurable for retry exhaustion, API rate limits, etc.
+
 
 ---
 
