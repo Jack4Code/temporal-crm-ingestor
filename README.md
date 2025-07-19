@@ -11,10 +11,9 @@ A reliable, fault-tolerant ingestion pipeline for syncing Zoho Form or Survey su
 - Accepts webhooks from Zoho Forms or Surveys  
 - Parses and transforms submissions into CRM-friendly formats  
 - Uses Temporal to orchestrate the creation of:
-  - Members  
-  - Caregivers  
-  - Emergency contacts  
-  - Staff or partners (customizable)  
+  - Uses Temporal to orchestrate the creation of one or more CRM records per submission  
+  - Designed to support complex workflows involving multiple related entities (e.g., Leads, Contacts, Accounts)  
+  - Prevents partial writes by ensuring all steps succeed or the entire workflow retries  
 - Handles failures, retries, and queue latency gracefully  
 - Uses TOML for config management (credentials, tokens, etc.)
 
