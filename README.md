@@ -44,6 +44,8 @@ cp config.example.toml config.toml
 # Start Temporal worker and server (in separate terminals)
 go run cmd/server/main.go
 go run cmd/worker/main.go
+```
+
 
 ## 🛠 Features
 
@@ -67,20 +69,20 @@ go run cmd/worker/main.go
 
 ## 📁 Project Structure
 
-```text
+```bash
 .
 ├── cmd/
-│   ├── server/         # Webhook server
-│   └── worker/         # Temporal workflows & activities
+│   ├── server/         # Webhook HTTP server (receives Zoho Forms submissions)
+│   └── worker/         # Temporal worker for processing workflows
 ├── config/
-│   └── config.toml     # Auth, tokens, secrets
+│   └── config.toml     # Contains sensitive credentials (in .gitignore)
 ├── internal/
-│   ├── crm/            # Zoho API logic
-│   ├── workflows/      # Temporal workflows
-│   └── utils/          # Helpers
-├── README.md
-└── go.mod
-```text
+│   ├── crm/            # Handles all Zoho CRM API interactions
+│   ├── workflows/      # Temporal workflows and activity definitions
+│   └── utils/          # Utility functions (e.g. JSON parsing, logging)
+├── go.mod              # Go module definition
+└── README.md
+```
 
 
 ---
