@@ -29,7 +29,9 @@ func main() {
 
 	// Register workflows and activities
 	w.RegisterWorkflow(workflows.CreateLeadWorkflow)
-	w.RegisterActivity(workflows.CreateLeadActivity)
+	w.RegisterActivity(workflows.CreateContactActivity)
+	w.RegisterActivity(workflows.CreateDealActivity)
+	w.RegisterActivity(workflows.DeleteContactActivity)
 
 	log.Println("👷 Worker started for task queue: lead-task-queue")
 	err = w.Run(worker.InterruptCh())

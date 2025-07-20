@@ -43,11 +43,29 @@ func GetAccessToken(ctx context.Context) (string, error) {
 	return token, nil
 }
 
-// CreateLeadWithRefresh gets an access token and sends the lead
-func CreateLeadWithRefresh(ctx context.Context, leadData map[string]interface{}) error {
+// CreateContactWithRefresh retrieves a token and creates a contact
+func CreateContactWithRefresh(ctx context.Context, contactData map[string]interface{}) (string, error) {
+	token, err := GetAccessToken(ctx)
+	if err != nil {
+		return "", fmt.Errorf("unable to get access token: %w", err)
+	}
+	return createContact(token, contactData)
+}
+
+// CreateDealWithRefresh retrieves a token and creates a deal
+func CreateDealWithRefresh(ctx context.Context, dealData map[string]interface{}) (string, error) {
+	token, err := GetAccessToken(ctx)
+	if err != nil {
+		return "", fmt.Errorf("unable to get access token: %w", err)
+	}
+	return createDeal(token, dealData)
+}
+
+// DeleteContact retrieves a token and deletes the contact by ID
+func DeleteContact(ctx context.Context, contactID string) error {
 	token, err := GetAccessToken(ctx)
 	if err != nil {
 		return fmt.Errorf("unable to get access token: %w", err)
 	}
-	return createLeadRaw(token, leadData)
+	return deleteContactByID(token, contactID)
 }
