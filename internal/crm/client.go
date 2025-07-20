@@ -11,7 +11,8 @@ import (
 	"temporal-crm-ingestor/config"
 )
 
-// GetAccessToken fetches a new Zoho access token using the refresh token
+// -------------------- AUTH --------------------
+
 func GetAccessToken(ctx context.Context) (string, error) {
 	data := fmt.Sprintf(
 		"refresh_token=%s&client_id=%s&client_secret=%s&grant_type=refresh_token",
@@ -43,7 +44,8 @@ func GetAccessToken(ctx context.Context) (string, error) {
 	return token, nil
 }
 
-// CreateContactWithRefresh retrieves a token and creates a contact
+// -------------------- PUBLIC "WITH REFRESH" API --------------------
+
 func CreateContactWithRefresh(ctx context.Context, contactData map[string]interface{}) (string, error) {
 	token, err := GetAccessToken(ctx)
 	if err != nil {
@@ -52,7 +54,6 @@ func CreateContactWithRefresh(ctx context.Context, contactData map[string]interf
 	return createContact(token, contactData)
 }
 
-// CreateDealWithRefresh retrieves a token and creates a deal
 func CreateDealWithRefresh(ctx context.Context, dealData map[string]interface{}) (string, error) {
 	token, err := GetAccessToken(ctx)
 	if err != nil {
@@ -61,11 +62,32 @@ func CreateDealWithRefresh(ctx context.Context, dealData map[string]interface{})
 	return createDeal(token, dealData)
 }
 
-// DeleteContact retrieves a token and deletes the contact by ID
-func DeleteContact(ctx context.Context, contactID string) error {
+func DeleteContactWithRefresh(ctx context.Context, contactID string) error {
 	token, err := GetAccessToken(ctx)
 	if err != nil {
 		return fmt.Errorf("unable to get access token: %w", err)
 	}
-	return deleteContactByID(token, contactID)
+	return deleteContactRaw(token, contactID)
+}
+
+// -------------------- PUBLIC DIRECT TOKEN API --------------------
+
+func CreateLead(token string, leadData map[string]interface{}) (string, error) {
+	return createLeadRaw(token, leadData)
+}
+
+func DeleteLead(token, leadID string) error {
+	return deleteLeadRaw(token, leadID)
+}
+
+func CreateDeal(token string, dealData map[string]interface{}) (string, error) {
+	return createDealRaw(token, dealData)
+}
+
+func DeleteDeal(token, dealID string) error {
+	return deleteDealRaw(token, dealID)
+}
+
+func DeleteContact(token, contactID string) error {
+	return deleteContactRaw(token, contactID)
 }

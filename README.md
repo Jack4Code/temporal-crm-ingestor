@@ -1,6 +1,6 @@
 # 🧠 temporal-crm-ingestor
 
-A reliable, fault-tolerant ingestion pipeline for syncing Zoho Form or Survey submissions to Zoho CRM using [Temporal](https://temporal.io/) for orchestration.
+A reliable, fault-tolerant ingestion pipeline for syncing Zoho Form submissions to Zoho CRM using [Temporal](https://temporal.io/) for orchestration.
 
 > Designed to solve challenges in multi-record creation, API delay handling, and record linking across CRM entities.
 
@@ -8,10 +8,10 @@ A reliable, fault-tolerant ingestion pipeline for syncing Zoho Form or Survey su
 
 ## 🔧 What It Does
 
-- Accepts webhooks from Zoho Forms or Surveys  
+- Accepts webhooks from Zoho Forms  
 - Parses and transforms submissions into CRM-friendly formats  
 - Uses Temporal to orchestrate the creation of:
-  - Uses Temporal to orchestrate the creation of one or more CRM records per submission  
+  - Creation of one or more CRM records per form submission  
   - Designed to support complex workflows involving multiple related entities (e.g., Leads, Contacts, Accounts)  
   - Prevents partial writes by ensuring all steps succeed or the entire workflow retries  
 - Handles failures, retries, and queue latency gracefully  
@@ -127,5 +127,3 @@ A production-ready deployment should include:
 
 MIT License.  
 Use it, fork it, ship it — just don’t hardcode your Zoho secrets in public repos 😄
-
-

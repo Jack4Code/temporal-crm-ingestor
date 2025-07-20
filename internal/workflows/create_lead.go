@@ -27,7 +27,7 @@ func CreateLeadWorkflow(ctx workflow.Context, payload map[string]interface{}) er
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
 
-	var contactID, dealID string
+	var contactID, dealID, leadID string
 
 	// Step 1: Create Contact
 	err := workflow.ExecuteActivity(ctx, CreateContactActivity, payload).Get(ctx, &contactID)
@@ -48,7 +48,16 @@ func CreateLeadWorkflow(ctx workflow.Context, payload map[string]interface{}) er
 		return err
 	}
 
-	logger.Info("✅ Workflow completed successfully", "contactID", contactID, "dealID", dealID)
+	// Step 3: Create Lead
+	err = workflow.ExecuteActivity(ctx, CreateLeadActivity, payload).Get(ctx, &leadID)
+	if err != nil {
+		logger.Error("❌ Failed to create lead, compensating by deleting contact and deal", "error", err)
+		_ = workflow.ExecuteActivity(ctx, DeleteDealActivity, dealID).Get(ctx, nil)
+		_ = workflow.ExecuteActivity(ctx, DeleteContactActivity, contactID).Get(ctx, nil)
+		return err
+	}
+
+	logger.Info("✅ Workflow completed successfully", "contactID", contactID, "dealID", dealID, "leadID", leadID)
 	return nil
 }
 
@@ -74,11 +83,36 @@ func CreateDealActivity(ctx context.Context, input map[string]interface{}) (stri
 
 	deal := map[string]interface{}{
 		"Contact_Name": input["contact_id"],
-		"Deal_Name":    "Sample Deal", // or extract from input["payload"]
+		"Deal_Name":    "Sample Deal",
 		"Stage":        "Qualification",
 	}
 
-	return crm.CreateDealWithRefresh(ctx, deal)
+	token, err := crm.GetAccessToken(ctx)
+	if err != nil {
+		return "", err
+	}
+	return crm.CreateDeal(token, deal)
+}
+
+// CreateLeadActivity creates a lead
+func CreateLeadActivity(ctx context.Context, payload map[string]interface{}) (string, error) {
+	logger := activity.GetLogger(ctx)
+	logger.Info("📈 Executing CreateLeadActivity", "payload", payload)
+
+	lead := map[string]interface{}{
+		"First_Name":  payload["firstName"],
+		"Last_Name":   payload["lastName"],
+		"Email":       payload["email"],
+		"Phone":       payload["phone"],
+		"Company":     payload["companyName"],
+		"Lead_Source": "Webhook",
+	}
+
+	token, err := crm.GetAccessToken(ctx)
+	if err != nil {
+		return "", err
+	}
+	return crm.CreateLead(token, lead)
 }
 
 // DeleteContactActivity deletes a contact in case of rollback
@@ -86,5 +120,33 @@ func DeleteContactActivity(ctx context.Context, contactID string) error {
 	logger := activity.GetLogger(ctx)
 	logger.Info("🧹 Executing DeleteContactActivity", "contactID", contactID)
 
-	return crm.DeleteContact(ctx, contactID)
+	token, err := crm.GetAccessToken(ctx)
+	if err != nil {
+		return err
+	}
+	return crm.DeleteContact(token, contactID)
+}
+
+// DeleteDealActivity deletes a deal in case of rollback
+func DeleteDealActivity(ctx context.Context, dealID string) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("🧹 Executing DeleteDealActivity", "dealID", dealID)
+
+	token, err := crm.GetAccessToken(ctx)
+	if err != nil {
+		return err
+	}
+	return crm.DeleteDeal(token, dealID)
+}
+
+// DeleteLeadActivity deletes a lead in case of rollback
+func DeleteLeadActivity(ctx context.Context, leadID string) error {
+	logger := activity.GetLogger(ctx)
+	logger.Info("🧹 Executing DeleteLeadActivity", "leadID", leadID)
+
+	token, err := crm.GetAccessToken(ctx)
+	if err != nil {
+		return err
+	}
+	return crm.DeleteLead(token, leadID)
 }
