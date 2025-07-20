@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Load config
-	err := config.LoadConfig("config/config.toml")
+	err := config.LoadConfig("config/config.toml") //err := config.LoadConfig("../../config/config.toml") to debug
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
@@ -31,7 +31,9 @@ func main() {
 	w.RegisterWorkflow(workflows.CreateLeadWorkflow)
 	w.RegisterActivity(workflows.CreateContactActivity)
 	w.RegisterActivity(workflows.CreateDealActivity)
+	w.RegisterActivity(workflows.CreateLeadActivity)
 	w.RegisterActivity(workflows.DeleteContactActivity)
+	w.RegisterActivity(workflows.DeleteDealActivity)
 
 	log.Println("👷 Worker started for task queue: lead-task-queue")
 	err = w.Run(worker.InterruptCh())
