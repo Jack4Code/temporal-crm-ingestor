@@ -1,0 +1,54 @@
+@startuml
+title Proposed CRM Integration Architecture
+
+skinparam rectangle {
+  BackgroundColor #e0f0ff
+  BorderColor black
+  RoundCorner 15
+}
+
+skinparam defaultTextAlignment center
+
+' External inputs
+rectangle "Zoho Forms" as Forms
+rectangle "Zoho Surveys" as Surveys
+rectangle "Webhooks (HTTP POST)" as Webhook
+
+Forms --> Webhook
+Surveys --> Webhook
+
+' Integration Service block with two runtimes
+rectangle "Integration Service" as IS {
+  rectangle "API Runtime\n(Receives Webhooks)" as API
+  rectangle "Temporal Runtime\n(Workflow Orchestrator)" as Temporal
+}
+
+Webhook --> API
+API --> Temporal
+
+' Temporal Workflow breakdown
+rectangle "Temporal Workflow (Saga)" as Workflow {
+  rectangle "Validate Submission" as Validate
+  rectangle "Deduplicate Records" as Dedup
+  rectangle "Create CRM Records" as Create
+  rectangle "Rollback on Failure" as Rollback
+  rectangle "Retry with Backoff" as Retry
+  rectangle "Send to Alerting\n(e.g., PagerDuty)" as Alert
+  rectangle "Zoho CRM (Target System)" as CRM_Endpoint
+}
+
+Temporal --> Validate
+Validate --> Dedup
+Dedup --> Create
+Create --> CRM_Endpoint
+
+' Failure path
+Create --> Rollback : on failure
+Rollback --> Retry
+Retry --> Alert : if max retries reached
+
+' External CRM destination
+rectangle "Zoho CRM (or future CRM)" as CRM
+CRM_Endpoint --> CRM : Final Write
+
+@enduml
